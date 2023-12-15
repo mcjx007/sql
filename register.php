@@ -155,37 +155,37 @@
         </div>
     </div>
     <?php
-// 這是 register.php 中進行註冊操作的程式碼
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $host = "127.0.0.1";
-    $dbuser = "root";
-    $dbpassword = "";
-    $dbname = "dbsql";
+    // 這是 register.php 中進行註冊操作的程式碼
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $host = "127.0.0.1";
+        $dbuser = "root";
+        $dbpassword = "";
+        $dbname = "dbsql";
     
-    $conn = new mysqli($host, $dbuser, $dbpassword, $dbname);
+        $conn = new mysqli($host, $dbuser, $dbpassword, $dbname);
     
-    if ($conn->connect_error) {
-        die("連線失敗: " . $conn->connect_error);
-    }
+        if ($conn->connect_error) {
+            die("連線失敗: " . $conn->connect_error);
+        }
     
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+        $username = $_POST["username"];
+        $password = $_POST["password"];
 
-    $stmt = $conn->prepare("INSERT INTO username (username, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $username, $password);
+        $stmt = $conn->prepare("INSERT INTO username (username, password) VALUES (?, ?)");
+        $stmt->bind_param("ss", $username, $password);
     
-    if ($stmt->execute()) {
-        // 註冊成功時顯示成功訊息
-        echo "<script>alert('註冊成功！您現在可以使用您的帳號登入。'); window.location.href = 'index.php';</script>";
-        exit(); // 確保後續代碼不會執行
-    } else {
-        echo "<p>註冊失敗。請稍後重試。</p>";
+        if ($stmt->execute()) {
+            // 註冊成功時顯示成功訊息
+            echo "<script>alert('註冊成功！您現在可以使用您的帳號登入。'); window.location.href = 'index.php';</script>";
+            exit(); // 確保後續代碼不會執行
+        } else {
+            echo "<p>註冊失敗。請稍後重試。</p>";
+        }
+    
+        $stmt->close();
+        $conn->close();
     }
-    
-    $stmt->close();
-    $conn->close();
-}
-?>
+    ?>
 
 
 </body>

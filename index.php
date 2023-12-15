@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <title>登入</title>
@@ -137,13 +137,13 @@
 <body>
     <div class="login-container">
         <h2>登入</h2>
-        <form class="login-form" action="login.php" method="post">
+        <form class="login-form" action="chat.html" method="post">
             <div>
-                <label for="username">帳號:</label>
+                <label for="username">帳號：</label>
                 <input type="text" id="username" name="username" required>
             </div>
             <div>
-                <label for="password">密碼:</label>
+                <label for="password">密碼：</label>
                 <input type="password" id="password" name="password" required>
             </div>
             <div>
@@ -154,5 +154,43 @@
             <p>建立帳號 <a href="register.php">註冊</a></p>
         </div>
     </div>
+
+    <?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $host = "127.0.0.1";
+    $dbuser = "root";
+    $dbpassword = "";
+    $dbname = "dbsql";
+
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+
+    try {
+        $conn = new PDO("mysql:host=$host;dbname=$dbname", $dbuser, $dbpassword);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $stmt = $conn->prepare("SELECT * FROM username WHERE username = :username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        $user = $stmt->fetch();
+
+        if ($user && password_verify($password, $user['password'])) {
+            // 密碼驗證成功
+            echo "<script>alert('登入成功！');</script>";
+            // 可以進行登入操作，例如設置 session 或導向 dashboard 等
+            // 例如： session_start(); $_SESSION['username'] = $username; header('Location: dashboard.php');
+            exit(); // 確保後續代碼不會執行
+        } else {
+            // 帳號或密碼錯誤
+            echo "<script>alert('帳號或密碼錯誤！請重新嘗試。');</script>";
+        }
+    } catch(PDOException $e) {
+        echo "錯誤：" . $e->getMessage();
+    }
+    
+    $conn = null;
+}
+?>
+
 </body>
 </html>
