@@ -171,8 +171,11 @@
         $username = $_POST["username"];
         $password = $_POST["password"];
 
-        $stmt = $conn->prepare("INSERT INTO username (username, password) VALUES (?, ?)");
-        $stmt->bind_param("ss", $username, $password);
+        // 使用 password_hash() 將密碼進行雜湊
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $stmt = $conn->prepare("INSERT INTO chunx (username, password) VALUES (?, ?)");
+        $stmt->bind_param("ss", $username, $hashed_password);
     
         if ($stmt->execute()) {
             // 註冊成功時顯示成功訊息
@@ -185,8 +188,6 @@
         $stmt->close();
         $conn->close();
     }
-    ?>
-
-
+?>
 </body>
 </html>
