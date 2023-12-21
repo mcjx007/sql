@@ -113,16 +113,33 @@
         function sendMessage() {
             var message = document.getElementById('input-box').value.trim();
             if (message !== '') {
+                var username = "使用者名稱"; // 將此處替換為您的用戶名稱
+
+                // AJAX 请求发送消息到 PHP 后端
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "chat.php", true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            console.log("Message sent successfully");
+                            // 在此添加任何其他操作（例如，更新聊天窗口）
+                        } else {
+                            console.error("Error:", xhr.status);
+                        }
+                    }
+                };
+                xhr.send("username=" + encodeURIComponent(username) + "&message=" + encodeURIComponent(message));
+                
+                // ...其余的创建消息元素并显示在聊天窗口的代码（与你之前的代码相同）
                 var chatBox = document.getElementById('chat-box');
                 var newMessage = document.createElement('div');
                 newMessage.classList.add('message');
                 newMessage.classList.add('sent');
-                
+
                 var newMessageBubble = document.createElement('div');
                 newMessageBubble.classList.add('message-bubble');
 
-                // 新增使用者名稱元素
-                var username = "使用者名稱"; // 在這裡更改為您的使用者名稱
                 var messageUsername = document.createElement('div');
                 messageUsername.classList.add('message-username');
                 messageUsername.textContent = username;
@@ -137,7 +154,7 @@
                 var hours = currentTime.getHours();
                 var minutes = currentTime.getMinutes();
                 var timeString = hours + ':' + (minutes < 10 ? '0' + minutes : minutes);
-                
+
                 var messageMeta = document.createElement('div');
                 messageMeta.classList.add('message-meta');
                 messageMeta.textContent = timeString;
@@ -156,5 +173,34 @@
             }
         });
     </script>
+    
+    <?php
+    // 连接到数据库并保存消息
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $servername = "127.0.0.1";
+        $username = "root";
+        $password = "";
+        $dbname = "dbsql";
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        $message = $_POST['message'];
+        $username = $_POST['username'];
+
+        $sql = "INSERT INTO chat (username, message) VALUES ('$username', '$message')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "Message sent successfully";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+
+        $conn->close();
+    }
+    ?>
 </body>
 </html>

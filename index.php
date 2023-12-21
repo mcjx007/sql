@@ -177,7 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user && password_verify($password, $user['password'])) {
             // 密碼驗證成功，將用戶導向到 chat.html 頁面
             echo "<script>alert('登入成功！');</script>";
-            echo '<script>window.location.replace("chat.html");</script>'; // 使用 JavaScript 進行導向
+            echo '<script>window.location.replace("chat.php");</script>'; // 使用 JavaScript 進行導向
             exit(); // 確保後續代碼不會執行
         } else {
             // 帳號或密碼錯誤，顯示警告框
